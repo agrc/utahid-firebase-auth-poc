@@ -1,5 +1,8 @@
 {
   "cSpell.words": [
-    "vite"
-  ]
+    "utahid",
+    "vite",
+    "vitejs"
+  ],
+  "livereload.delayForUpdate": 1000
 }
