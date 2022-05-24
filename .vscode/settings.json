@@ -4,5 +4,4 @@
     "vite",
     "vitejs"
   ],
-  "livereload.delayForUpdate": 1000
 }

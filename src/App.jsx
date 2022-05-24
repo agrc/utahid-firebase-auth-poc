@@ -1,41 +1,59 @@
-import { useState } from 'react'
-import logo from './logo.svg'
+import { useRef, useEffect, useState} from 'react'
 import './App.css'
+import { initializeApp } from 'firebase/app';
+import { getAuth, OAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from 'firebase/auth';
+import secrets from './secrets';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const authRef = useRef(null);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const firebaseApp = initializeApp(secrets.firebaseConfig);
+    const auth = getAuth(firebaseApp);
+
+    authRef.current = auth;
+
+    onAuthStateChanged(auth, user => {
+      setUser(user);
+    });
+  }, []);
+
+  const logIn = async () => {
+    const provider = new OAuthProvider('oidc.utahid');
+
+    const result = await signInWithPopup(authRef.current, provider);
+
+    console.log('result', result);
+  };
+
+  const makeSecureRequest = async () => {
+    const secureResult = await fetch('/test');
+
+    console.log('secureResult', await secureResult.text());
+  };
 
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>Hello Vite + React!</p>
+        <h1>UtahID auth via Firebase POC</h1>
         <p>
-          <button type="button" onClick={() => setCount((count) => count + 1)}>
-            count is: {count}
+          {user ? user.email : 'not logged in'}
+        </p>
+        <p>
+          <button type="button" onClick={logIn}>
+            login
           </button>
         </p>
         <p>
-          Edit <code>App.jsx</code> and save to test HMR updates.
+          <button type="button" onClick={() => signOut(authRef.current)}>
+            logout
+          </button>
         </p>
         <p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-          {' | '}
-          <a
-            className="App-link"
-            href="https://vitejs.dev/guide/features.html"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Vite Docs
-          </a>
+          <button type='button' onClick={makeSecureRequest}>
+            make secure request
+          </button>
         </p>
       </header>
     </div>
