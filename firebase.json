@@ -6,9 +6,6 @@
   },
   "hosting": {
     "public": "dist",
-    "rewrites": [{
-      "source": "**", "function": "api"
-    }],
     "ignore": [
       "firebase.json",
       "**/.*",

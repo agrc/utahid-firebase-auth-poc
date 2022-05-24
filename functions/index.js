@@ -1,15 +1,15 @@
 import functions from "firebase-functions"
-import init from 'utahid-firebase-auth-back';
-import express from 'express';
-import secrets from './secrets.json';
 
 
-const app = express();
+export const test = functions.https.onCall((data, context) => {
+  console.log('user', context.auth);
 
-const {secureEndpoint} = init(app, secrets.clientSecret, secrets.clientId, 'http://localhost:5000', 'http://localhost:5000');
+  if (context.auth) {
+    return {
+      message: 'test successful',
+      user: context.auth.uid
+    }
+  }
 
-app.get('/secured', secureEndpoint(), (request, response) => {
-  response.send('test');
+  throw new functions.https.HttpsError('unauthenticated', 'You must be logged in to use this function');
 });
-
-export const api = functions.https.onRequest(app);

@@ -6,7 +6,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '/test': 'http://localhost:5000',
+      '^/ut-dts-agrc-poc-utahid-fb-dev/us-central1/*': 'http://localhost:5001',
     }
   }
 });
