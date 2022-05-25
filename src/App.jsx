@@ -10,8 +10,10 @@ function App() {
   const functionsRef = useRef(null);
   const [user, setUser] = useState(null);
   const interceptor = useRef();
+  const mapRef = useRef();
 
   const initMap = () => {
+    console.log('initMap');
     require([
       "esri/config",
       "esri/Map",
@@ -20,6 +22,10 @@ function App() {
       "esri/layers/FeatureLayer"
 
     ], function(esriConfig,Map, MapView, FeatureLayer) {
+      if (mapRef.current) {
+        mapRef.current.destroy();
+      }
+
       if (interceptor.current) {
         esriConfig.request.interceptors.push(interceptor.current);
       }
@@ -34,6 +40,8 @@ function App() {
         center: [-112.60543,39.02700],
         zoom: 8
       });
+
+      mapRef.current = view;
 
       const secured = new FeatureLayer({
         url: "http://localhost:5001/ut-dts-agrc-poc-utahid-fb-dev/us-central1/maps/secured/1"
