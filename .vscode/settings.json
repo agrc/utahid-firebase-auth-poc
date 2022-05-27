@@ -1,8 +1,10 @@
 {
   "cSpell.words": [
     "Enviro",
+    "firestore",
     "mapserver",
     "oidc",
+    "predeploy",
     "utahid",
     "vite",
     "vitejs"
