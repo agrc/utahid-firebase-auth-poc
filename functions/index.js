@@ -4,12 +4,10 @@ import initProxy from 'firebase-auth-arcgis-server-proxy';
 
 
 export const test = functions.https.onCall((data, context) => {
-  console.log('user', context.auth);
-
   if (context.auth) {
     return {
       message: 'test successful',
-      user: context.auth.uid
+      user: context.auth
     }
   }
 
