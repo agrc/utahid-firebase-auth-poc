@@ -57,7 +57,6 @@ function App() {
         urls: /secured/,
         before: (params) => {
           params.requestOptions.headers = {Authorization: `Bearer ${user.accessToken}`};
-          console.log('headers', params.requestOptions.headers);
         }
       }
     }
@@ -66,12 +65,13 @@ function App() {
   }, [user]);
 
   useEffect(() => {
-    const firebaseApp = initializeApp(secrets.firebaseConfig);
-    const functions = getFunctions(firebaseApp);
-    const auth = getAuth(firebaseApp);
+    initializeApp(secrets.firebaseConfig);
+    const functions = getFunctions();
+    const auth = getAuth();
 
     if (import.meta.env.DEV) {
-      connectAuthEmulator(auth, 'http://localhost:9099'); // comment out to point at utahid and firebase project
+      // comment out this line and the auth emulator config in firebase.json to point at utahid and firebase project
+      connectAuthEmulator(auth, 'http://localhost:9099');
       connectFunctionsEmulator(functions, 'localhost', 3000);
     }
 
@@ -87,6 +87,8 @@ function App() {
 
   const logIn = async () => {
     const provider = new OAuthProvider('oidc.utahid');
+    provider.addScope('app:DWRElectroFishing');
+    provider.addScope('app:public');
 
     const result = await signInWithPopup(authRef.current, provider);
 
@@ -101,7 +103,11 @@ function App() {
   };
 
   const makeMapServerRequest = async () => {
-    const response = await fetch('http://localhost:5001/ut-dts-agrc-poc-utahid-fb-dev/us-central1/mapserver/service1?f=json');
+    const response = await fetch('http://localhost:5001/ut-dts-agrc-poc-utahid-fb-dev/us-central1/maps/secured/1?f=json', {
+      headers: {
+        Authorization: `Bearer ${await user.accessToken}`
+      }
+    });
 
     console.log('response', await response.text());
   };
